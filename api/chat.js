@@ -1,6 +1,6 @@
 export const config = {
   api: {
-    bodyParser: true, // ✅ enable built-in body parser for JSON
+    bodyParser: true,
   }
 };
 
@@ -38,15 +38,10 @@ Keep answers friendly and concise.
     });
 
     const data = await openaiRes.json();
-
-    if (!data.choices || !data.choices[0]?.message?.content) {
-      console.error("OpenAI API response incomplete:", data);
-      return res.status(500).json({ reply: "OpenAI returned no response." });
-    }
-
-    return res.status(200).json({ reply: data.choices[0].message.content });
+    const reply = data.choices?.[0]?.message?.content || "OpenAI didn't return a reply.";
+    res.status(200).json({ reply });
   } catch (error) {
     console.error("Error calling OpenAI:", error);
-    return res.status(500).json({ reply: "Server error while connecting to AI." });
+    res.status(500).json({ reply: "Server error while connecting to AI." });
   }
 }
