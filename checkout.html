@@ -63,5 +63,78 @@
   });
 </script>
 
+<!-- CHATBOT UI -->
+<div id="chatbot" class="fixed bottom-20 right-6 z-50 hidden w-80 bg-white rounded-xl shadow-xl border overflow-hidden">
+  <div class="bg-indigo-600 text-white p-4 font-bold">💬 Ask Us Anything</div>
+  <div id="chatMessages" class="p-4 h-64 overflow-y-auto space-y-2 text-sm text-gray-800"></div>
+  <div class="flex border-t">
+    <input id="chatInput" type="text" placeholder="Type your question..." class="flex-1 px-3 py-2 text-sm focus:outline-none">
+    <button id="sendBtn" class="bg-indigo-600 text-white px-4">Send</button>
+  </div>
+</div>
+
+<!-- Toggle Button -->
+<button id="chatToggle" class="fixed bottom-6 right-6 bg-indigo-600 text-white rounded-full p-4 shadow-lg hover:bg-indigo-700 text-lg z-50">
+  💬
+</button>
+
+<script>
+const OPENAI_API_KEY = "sk-..."; // 🔒 Replace with your actual secret OpenAI API key (keep private)
+
+const systemPrompt = `
+You are a helpful AI chatbot for the AI Job Hacker Kit.
+You answer queries based only on this knowledge base:
+
+1. The AI Job Hacker Kit is a ₹999 digital product.
+2. It includes resume prompts, interview questions, cover letter generator, LinkedIn tips, etc.
+3. It's made for Indian job seekers.
+4. Buyers get instant access via email and WhatsApp.
+5. Refunds are available within 7 days.
+Answer clearly and helpfully, avoid hallucinating or guessing. Be short and friendly.
+`;
+
+document.getElementById("chatToggle").onclick = () => {
+  const bot = document.getElementById("chatbot");
+  bot.classList.toggle("hidden");
+};
+
+document.getElementById("sendBtn").onclick = async () => {
+  const input = document.getElementById("chatInput");
+  const messagesDiv = document.getElementById("chatMessages");
+  const userText = input.value.trim();
+  if (!userText) return;
+
+  // Display user message
+  messagesDiv.innerHTML += `<div class="text-right"><b>You:</b> ${userText}</div>`;
+
+  // Clear input
+  input.value = "";
+
+  // Call OpenAI API
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userText }
+      ],
+      temperature: 0.7
+    })
+  });
+
+  const data = await response.json();
+  const botReply = data.choices?.[0]?.message?.content || "Sorry, I couldn't understand that.";
+
+  messagesDiv.innerHTML += `<div><b>Bot:</b> ${botReply}</div>`;
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+};
+</script>
+
+  
 </body>
 </html>
