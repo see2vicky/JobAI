@@ -11,7 +11,7 @@
     html { scroll-behavior: smooth; }
   </style>
 </head>
-<body class="bg-white text-gray-800">
+<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-white transition duration-300">
 
 <!-- HEADER -->
 <header class="bg-white shadow fixed w-full top-0 z-50">
@@ -28,8 +28,17 @@
       <a href="#faq" class="hover:text-indigo-600">FAQs</a>
       <a href="#contact" class="hover:text-indigo-600">Contact</a>
     </nav>
-    <button id="menuToggle" class="md:hidden text-3xl text-gray-700 focus:outline-none">&#9776;</button>
+<div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+  <div class="text-2xl font-extrabold text-black flex items-center space-x-2">
+    <img src="https://img.icons8.com/emoji/48/briefcase-emoji.png" class="h-8 w-8" alt="Logo">
+    <span>AIJobHacker</span>
   </div>
+    <button id="menuToggle" class="md:hidden text-3xl text-gray-700 focus:outline-none">&#9776;</button>
+<button id="darkModeToggle" class="text-sm border px-3 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">
+  🌙 Toggle Dark Mode
+  </div>
+</button>
+
 </header>
 
 <!-- BODY CONTENT -->
@@ -95,6 +104,21 @@
 
     messagesDiv.innerHTML += `<div><b>Bot:</b> ${botReply}</div>`;
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  };
+</script>
+<script>
+  const root = document.documentElement;
+  const toggleBtn = document.getElementById("darkModeToggle");
+
+  // Check if user previously selected dark mode
+  if (localStorage.getItem("theme") === "dark") {
+    root.classList.add("dark");
+  }
+
+  // Toggle when clicked
+  toggleBtn.onclick = () => {
+    root.classList.toggle("dark");
+    localStorage.setItem("theme", root.classList.contains("dark") ? "dark" : "light");
   };
 </script>
 
